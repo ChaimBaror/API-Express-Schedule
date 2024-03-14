@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { post, getPost } from '../Controllers/tametable';
+import { post, getPost } from '../Controllers/tametable.controller';
 // Routes
 const routes = Router();
 
