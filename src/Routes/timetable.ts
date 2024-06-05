@@ -1,11 +1,11 @@
 import {Router} from 'express';
-import { post, getPost } from '../Controllers/tametable.controller';
+import { setItem, getItem, deleteItem, updateItem } from '../Controllers/Items.controller';
 // Routes
 const routes = Router();
 
-// Save user
-routes.get('/', getPost)
-// Save post (timetable) by user
-routes.post('/posts', post);
+routes.get('/', getItem)
+routes.post('/', setItem);
+routes.put('/:id', updateItem);
+routes.delete('/:id', deleteItem );
 
 export default routes;

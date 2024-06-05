@@ -1,7 +1,7 @@
 import express from "express";
 import userRoute from "./Routes/user.route";
 import timetableRoute from "./Routes/timetable";
-import { run } from "./config";
+const connectDB = require('./config');
 
 // Initialize Express application
 const app = express();
@@ -14,13 +14,13 @@ app.use(express.json());
 
 // Routes
 app.use('/user', userRoute); // User-related routes
-app.use('/api', timetableRoute); // Timetable-related routes
+app.use('/api/item', timetableRoute); // Timetable-related routes
 
 // Define the port for the server to listen on
 const port = process.env.PORT || 8000;
 
 // Connect to the database
-run().catch(console.error);
+connectDB()
 
 // Start the server
 app.listen(port, () => {
