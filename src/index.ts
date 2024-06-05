@@ -1,4 +1,5 @@
 import express from "express";
+import cors from 'cors';
 import userRoute from "./Routes/user.route";
 import timetableRoute from "./Routes/timetable";
 const connectDB = require('./config');
@@ -11,6 +12,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware for parsing JSON bodies
 app.use(express.json());
+
+app.use(cors({
+    origin: 'http://localhost:3000'  // Allow only this origin
+  }));
 
 // Routes
 app.use('/user', userRoute); // User-related routes

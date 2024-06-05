@@ -12,6 +12,7 @@ const TimeSchema = new Schema({
 }, { _id: false });
 
 const ItemSchema = new Schema({
+  _id: { type: Number },
   title: { type: String, required: true },
   description: { type: String },
   times: [TimeSchema]

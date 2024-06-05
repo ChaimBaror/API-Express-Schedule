@@ -18,20 +18,21 @@ export const getItem = async (req: Request, res: Response) => {
 
 }
 
-export const setItem = (req: Request, res: Response) => {
+export const createItem = (req: Request, res: Response) => {
     console.log("hello setItem", req.body);
     const col = req.body.col
     const item = {
+        _id: req.body.uid,
         title: req.body.title || '',
-        times: req.body.time || [],
+        times: req.body.times || {},
         description: req.body.description || ''
     }
     console.log("item", item);
     
     try {
-        if (col == 'Right') Right.create(item).then(() => res.status(203).json(item))
-        if (col == 'Medium') Medium.create(item).then(() => res.status(203).json(item))
-        if (col == 'Left') Left.create(item).then(() => res.status(203).json(item))
+        if (col == 'Right') Right.create(item).then(() => res.status(201).json(item))
+        if (col == 'Medium') Medium.create(item).then(() => res.status(201).json(item))
+        if (col == 'Left') Left.create(item).then(() => res.status(201).json(item))
     } catch (error) {
         console.log(error)
     }

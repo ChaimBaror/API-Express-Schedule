@@ -1,10 +1,10 @@
 import {Router} from 'express';
-import { setItem, getItem, deleteItem, updateItem } from '../Controllers/Items.controller';
+import { createItem, getItem, deleteItem, updateItem } from '../Controllers/Items.controller';
 // Routes
 const routes = Router();
 
 routes.get('/', getItem)
-routes.post('/', setItem);
+routes.post('/', createItem);
 routes.put('/:id', updateItem);
 routes.delete('/:id', deleteItem );
 
