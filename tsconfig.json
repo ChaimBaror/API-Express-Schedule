@@ -2,12 +2,12 @@
     "compilerOptions": {
       "target": "es6",
       "module": "commonjs",
-      "outDir": "./dist",
+      "outDir": "./public",
       "strict": true,
       "esModuleInterop": true,
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true
     },
-    "include": ["src/**/*.ts"],
+    "include": ["api/**/*.ts"],
     "exclude": ["node_modules"]
   }
