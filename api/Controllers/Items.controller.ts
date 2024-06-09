@@ -22,13 +22,13 @@ export const createItem = (req: Request, res: Response) => {
     console.log("hello setItem", req.body);
     const col = req.body.col
     const item = {
-        _id: req.body.uid,
+        _id: req.body._id,
         title: req.body.title || '',
         times: req.body.times || {},
         description: req.body.description || ''
     }
     console.log("item", item);
-    
+
     try {
         if (col == 'Right') Right.create(item).then(() => res.status(201).json(item))
         if (col == 'Medium') Medium.create(item).then(() => res.status(201).json(item))
@@ -39,10 +39,11 @@ export const createItem = (req: Request, res: Response) => {
 }
 
 export const updateItem = async (req: Request, res: Response) => {
-    const { title, description, times, col } = req.body;
-    const _id = req.params.id;
+    console.log("hello updateItem", req.body);
+    const { title, description, times, col, _id, index } = req.body;
+    // const _id = req.params.id;
 
-    const itemFields = { title, description, times };
+    const itemFields = { title, description, times, col, index };
 
     try {
         let item;
@@ -57,13 +58,16 @@ export const updateItem = async (req: Request, res: Response) => {
                 item = await Left.findByIdAndUpdate(_id, { $set: itemFields }, { new: true });
                 break;
             default:
+                console.log("Invalid column");
                 return res.status(400).json({ error: "Invalid column" });
         }
 
         if (!item) {
+            console.log("Item not found");
             return res.status(404).json({ error: 'Item not found' });
         }
 
+        console.log("Item updated:", item);
         res.json(item);
     } catch (error) {
         console.error("Error updating item:", error);
@@ -77,7 +81,7 @@ export const deleteItem = async (req: Request, res: Response) => {
     const { col } = req.body;
     const id = req.params.id;
     console.log("hello deleteItem", id, col);
-    
+
 
     try {
         let result;

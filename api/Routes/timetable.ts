@@ -4,8 +4,7 @@ import { createItem, getItem, deleteItem, updateItem } from '../Controllers/Item
 const routes = Router();
 
 routes.get('/', getItem)
-routes.post('/', createItem);
-routes.put('/:id', updateItem);
+routes.post('/', updateItem);
 routes.delete('/:id', deleteItem );
 
 export default routes;
