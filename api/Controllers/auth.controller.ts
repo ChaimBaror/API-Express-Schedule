@@ -5,9 +5,11 @@ import { User } from '../Module/User.module';
 // Admins defined in env — auto-promoted on every login
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
 
-function resolveRole(email: string, currentRole?: string): string {
+type Role = 'admin' | 'gabay' | 'user';
+
+function resolveRole(email: string, currentRole?: string): Role {
     if (ADMIN_EMAILS.includes(email.toLowerCase())) return 'admin';
-    return currentRole || 'user';
+    return (currentRole as Role) || 'user';
 }
 
 /**
