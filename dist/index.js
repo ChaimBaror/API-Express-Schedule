@@ -7,25 +7,27 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const user_route_1 = __importDefault(require("./Routes/user.route"));
 const timetable_1 = __importDefault(require("./Routes/timetable"));
-const connectDB = require('./config');
-// Initialize Express application
+const auth_route_1 = __importDefault(require("./Routes/auth.route"));
+const config_1 = __importDefault(require("./config"));
 const app = (0, express_1.default)();
-// Middleware for parsing URL-encoded bodies
 app.use(express_1.default.urlencoded({ extended: true }));
-// Middleware for parsing JSON bodies
 app.use(express_1.default.json());
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',');
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:3000' // Allow only this origin
+    origin: allowedOrigins
 }));
 // Routes
-app.use('/user', user_route_1.default); // User-related routes
-app.use('/api/item', timetable_1.default); // Timetable-related routes
-// Define the port for the server to listen on
+app.use('/auth', auth_route_1.default);
+app.use('/user', user_route_1.default);
+app.use('/api/item', timetable_1.default);
+// Global error handler
+app.use((err, req, res, _next) => {
+    console.error("Unhandled error:", err.message);
+    res.status(500).json({ error: "Internal server error" });
+});
 const port = process.env.PORT || 8000;
-// Connect to the database
-connectDB();
-// Start the server
+(0, config_1.default)();
 app.listen(port, () => {
     console.log(`Server started at http://localhost:${port}`);
 });
-module.exports = app;
+exports.default = app;
