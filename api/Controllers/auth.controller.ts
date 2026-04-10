@@ -109,11 +109,12 @@ export const googleAuth = async (req: Request, res: Response) => {
         let user = await User.findOne({ email });
 
         if (user) {
-            // Update googleId if not set
-            if (!user.googleId && googleId) {
-                user.googleId = googleId;
-                await user.save();
-            }
+            let changed = false;
+            if (!user.googleId && googleId) { user.googleId = googleId; changed = true; }
+            // Auto-promote if in ADMIN_EMAILS
+            const correctRole = resolveRole(email, user.role);
+            if (user.role !== correctRole) { user.role = correctRole; changed = true; }
+            if (changed) await user.save();
         } else {
             // First-time Google sign-in → create user
             user = await User.create({
@@ -121,7 +122,7 @@ export const googleAuth = async (req: Request, res: Response) => {
                 email,
                 googleId,
                 phone: phone || '',
-                role: 'user',
+                role: resolveRole(email),
             });
         }
 
