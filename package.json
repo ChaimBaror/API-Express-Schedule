@@ -19,7 +19,6 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
-    "@types/bcryptjs": "^3.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
