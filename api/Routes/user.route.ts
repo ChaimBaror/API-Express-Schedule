@@ -4,7 +4,7 @@ import { getUser, getUsers, setUser } from '../Controllers/users.controller';
 const route = Router();
 
 route.get('/',getUsers );
-route.get('/user:id', getUser)
+route.get('/:id', getUser)
 route.post('/', setUser);
 
 export default route;  
