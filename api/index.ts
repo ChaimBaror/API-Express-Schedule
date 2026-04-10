@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import userRoute from "./Routes/user.route";
 import timetableRoute from "./Routes/timetable";
 import authRoute from "./Routes/auth.route";
@@ -15,13 +16,22 @@ app.use(cors({
     origin: allowedOrigins
 }));
 
+// Rate limit auth endpoints — 20 attempts per 15 min per IP
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: { error: 'Too many requests, try again later' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 // Routes
-app.use('/auth', authRoute);
+app.use('/auth', authLimiter, authRoute);
 app.use('/user', userRoute);
 app.use('/api/item', timetableRoute);
 
 // Global error handler
-app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     console.error("Unhandled error:", err.message);
     res.status(500).json({ error: "Internal server error" });
 });
@@ -35,4 +45,3 @@ app.listen(port, () => {
 });
 
 export default app;
-

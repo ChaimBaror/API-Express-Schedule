@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { User } from '../Module/User.module';
 
 // Admins defined in env — auto-promoted on every login
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'ch.baror@gmail.com').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
 
 type Role = 'admin' | 'gabay' | 'user';
 

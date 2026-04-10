@@ -6,6 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserByEmail = exports.createGabay = exports.setPassword = exports.googleAuth = exports.login = exports.register = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const User_module_1 = require("../Module/User.module");
+// Admins defined in env — auto-promoted on every login
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'ch.baror@gmail.com').split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
+function resolveRole(email, currentRole) {
+    if (ADMIN_EMAILS.includes(email.toLowerCase()))
+        return 'admin';
+    return currentRole || 'user';
+}
 /**
  * POST /auth/register
  * Register a new user with email + password + phone
@@ -21,12 +28,13 @@ const register = async (req, res) => {
             return res.status(409).json({ error: 'Email already registered' });
         }
         const hashedPassword = await bcryptjs_1.default.hash(password, 10);
+        const role = resolveRole(email);
         const user = await User_module_1.User.create({
             name,
             email,
             password: hashedPassword,
             phone,
-            role: 'user',
+            role,
         });
         res.status(201).json({
             _id: user._id,
@@ -61,6 +69,12 @@ const login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
+        // Auto-promote if in ADMIN_EMAILS
+        const correctRole = resolveRole(email, user.role);
+        if (user.role !== correctRole) {
+            user.role = correctRole;
+            await user.save();
+        }
         res.json({
             _id: user._id,
             name: user.name,
@@ -88,11 +102,19 @@ const googleAuth = async (req, res) => {
     try {
         let user = await User_module_1.User.findOne({ email });
         if (user) {
-            // Update googleId if not set
+            let changed = false;
             if (!user.googleId && googleId) {
                 user.googleId = googleId;
-                await user.save();
+                changed = true;
             }
+            // Auto-promote if in ADMIN_EMAILS
+            const correctRole = resolveRole(email, user.role);
+            if (user.role !== correctRole) {
+                user.role = correctRole;
+                changed = true;
+            }
+            if (changed)
+                await user.save();
         }
         else {
             // First-time Google sign-in → create user
@@ -101,7 +123,7 @@ const googleAuth = async (req, res) => {
                 email,
                 googleId,
                 phone: phone || '',
-                role: 'user',
+                role: resolveRole(email),
             });
         }
         res.json({
